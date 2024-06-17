@@ -1,0 +1,29 @@
+<div *ngIf="isLoading">
+  <p>Загрузка...</p>
+</div>
+<button type="button" (click)="isCardVisible.set(!isCardVisible())">строка или карточка</button>
+<div *ngIf="!isLoading">
+  <input type="text" placeholder="Поиск по имени пользователя" (input)="filterUsers($event)">
+  <h2>Список пользователей</h2>
+  @if (!isCardVisible()) {
+    <ul>
+      <li *ngFor="let user of filteredUsers">
+        {{ user.user_name }}
+        <span class="profile-card__action-btns">
+          <button class="btn">Удалить</button>
+        </span>
+      </li>
+    </ul>
+  }
+  @if (isCardVisible()) {
+    <div class="card-container">
+      <div class="profile-card" *ngFor="let user of filteredUsers">
+        <strong>{{user.user_name}}</strong>
+        <div class="profile-card__action-btns">
+          <button class="btn">Удалить</button>
+        </div>
+      </div>
+    </div>
+  }
+  <p>Всего пользователей: {{ totalUsers }}</p>
+</div>

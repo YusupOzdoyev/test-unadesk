@@ -1,27 +1,32 @@
 <div *ngIf="isLoading">
   <p>Загрузка...</p>
 </div>
-<button type="button" (click)="isCardVisible.set(!isCardVisible())">строка или карточка</button>
 <div *ngIf="!isLoading">
   <input type="text" placeholder="Поиск по имени пользователя" (input)="filterUsers($event)">
   <h2>Список пользователей</h2>
+  <div>
+    <button (click)="changeItemsPerPage(5)">Показывать 5</button>
+    <button (click)="changeItemsPerPage(10)">Показывать 10</button>
+    <button (click)="changeItemsPerPage(20)">Показывать 20</button>
+  </div>
+  <div>
+    <button (click)="previousPage()">prev</button>
+    <button (click)="nextPage()">next</button>
+  </div>
+  <button type="button" (click)="isCardVisible.set(!isCardVisible())">Сменить вид</button>
   @if (!isCardVisible()) {
     <ul>
-      <li *ngFor="let user of filteredUsers">
+      <li *ngFor="let user of filteredUsers | slice: (currentPage - 1) * itemsPerPage : (currentPage - 1) * itemsPerPage + itemsPerPage">
         {{ user.user_name }}
-        <span class="profile-card__action-btns">
-          <button class="btn">Удалить</button>
-        </span>
+          <button (click)="deleteUser(user.id)">Удалить</button>
       </li>
     </ul>
   }
   @if (isCardVisible()) {
     <div class="card-container">
-      <div class="profile-card" *ngFor="let user of filteredUsers">
+      <div class="profile-card" *ngFor="let user of filteredUsers | slice: (currentPage - 1) * itemsPerPage : (currentPage - 1) * itemsPerPage + itemsPerPage">
         <strong>{{user.user_name}}</strong>
-        <div class="profile-card__action-btns">
-          <button class="btn">Удалить</button>
-        </div>
+          <button (click)="deleteUser(user.id)">Удалить</button>
       </div>
     </div>
   }

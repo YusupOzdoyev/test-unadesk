@@ -3,7 +3,6 @@
 </div>
 <div *ngIf="!isLoading">
   <input type="text" placeholder="Поиск по имени пользователя" (input)="filterUsers($event)">
-  <h2>Список пользователей</h2>
   <div>
     <button (click)="changeItemsPerPage(5)">Показывать 5</button>
     <button (click)="changeItemsPerPage(10)">Показывать 10</button>
@@ -15,6 +14,7 @@
   </div>
   <button type="button" (click)="isCardVisible.set(!isCardVisible())">Сменить вид</button>
   @if (!isCardVisible()) {
+    <h2>Список пользователей</h2>
     <ul>
       <li *ngFor="let user of filteredUsers | slice: (currentPage - 1) * itemsPerPage : (currentPage - 1) * itemsPerPage + itemsPerPage">
         {{ user.user_name }}
@@ -23,6 +23,7 @@
     </ul>
   }
   @if (isCardVisible()) {
+    <h2>Карточки пользователей</h2>
     <div class="card-container">
       <div class="profile-card" *ngFor="let user of filteredUsers | slice: (currentPage - 1) * itemsPerPage : (currentPage - 1) * itemsPerPage + itemsPerPage">
         <strong>{{user.user_name}}</strong>

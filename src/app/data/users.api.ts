@@ -5,7 +5,7 @@ import { UserDto, ListRequest, UserListResponseDto } from './users.interface';
 @Injectable({ providedIn: 'root' })
 export class UsersApi {
 
-  private DB: UserDto[] = [
+  private readonly DB: UserDto[] = [
     { id: 'u1', user_name: 'Ivan Z.', is_active: true },
     { id: 'u2', user_name: 'Mikhail X.', is_active: true },
     { id: 'u3', user_name: 'Ivan C.', is_active: true },
@@ -25,10 +25,10 @@ export class UsersApi {
     { id: 'u17', user_name: 'Ivan Q.', is_active: true },
   ];
 
-  private userListSubject = new BehaviorSubject<UserDto[]>(this.DB);
-  userList$ = this.userListSubject.asObservable();
+  private readonly userListSubject = new BehaviorSubject<UserDto[]>(this.DB);
+  public userList$ = this.userListSubject.asObservable();
     
-  getList(request: ListRequest): Observable<UserListResponseDto> {
+  public getList(request: ListRequest): Observable<UserListResponseDto> {
     const users = this.DB.filter(user =>
       user.user_name.toLowerCase().includes(request.search.toLowerCase())
     );
@@ -41,7 +41,7 @@ export class UsersApi {
     return of(response).pipe(delay(500))
   }
 
-  remove(id: string): Observable<UserListResponseDto> {
+  public remove(id: string): Observable<UserListResponseDto> {
     const users = this.DB.filter(user => user.id !== id);
     const response: UserListResponseDto = {
       items: users,

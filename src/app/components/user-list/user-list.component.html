@@ -4,9 +4,9 @@
 <div *ngIf="!isLoading">
   <input type="text" placeholder="Поиск по имени пользователя" (input)="filterUsers($event)">
   <div>
-    <button (click)="changeItemsPerPage(5)">Показывать 5</button>
-    <button (click)="changeItemsPerPage(10)">Показывать 10</button>
-    <button (click)="changeItemsPerPage(20)">Показывать 20</button>
+    <select (change)="changeItemsPerPage($event)">
+      <option *ngFor="let option of itemsPerPageOptions" [value]="option">Показывать {{ option }}</option>
+    </select>
   </div>
   <div>
     <button (click)="previousPage()">prev</button>

@@ -1,7 +1,7 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
-import { UsersApi } from '../../../data/users.api';
 import { CommonModule } from '@angular/common';
-import { UserDto, ListRequest, UserListResponseDto } from '../../../data/users.interface';
+import { UsersApi } from '../../data/users.api';
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { UserDto, ListRequest, UserListResponseDto } from '../../data/users.interface';
 
 @Component({
   selector: 'app-user-list',
@@ -10,16 +10,18 @@ import { UserDto, ListRequest, UserListResponseDto } from '../../../data/users.i
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.scss'
 })
+
 export class UserListComponent implements OnInit {
+  isCardVisible = signal<boolean>(false);
   profileService = inject(UsersApi);
-  userList!: UserDto[];
+  search = '';
+  itemsPerPage = 5;
   totalUsers!: number;
+  userList!: UserDto[];
+  currentPage: number = 1;
   isLoading: boolean = true;
   filteredUsers!: UserDto[];
-  search = '';
-  itemsPerPage: 5 | 10 | 20 = 5;
-  currentPage: number = 1;
-  isCardVisible = signal<boolean>(false);
+  itemsPerPageOptions = [5, 10, 20];
 
   ngOnInit() {
     const request: ListRequest = {
@@ -40,7 +42,7 @@ export class UserListComponent implements OnInit {
     });
   }
 
-  filterUsers(event: Event): void {
+  protected filterUsers(event: Event): void {
     const searchTerm = (event.target as HTMLInputElement).value;
     this.filteredUsers = this.userList.filter(user =>
       user.user_name.toLowerCase().includes(searchTerm.toLowerCase()),
@@ -49,33 +51,30 @@ export class UserListComponent implements OnInit {
     this.isLoading = false;
   }
 
-  setPage(page: number): void {
-    this.currentPage = page;
+  protected deleteUser(id: string): void {
+    this.profileService.remove(id).subscribe(() => {
+      this.userList = this.filteredUsers.filter(user => user.id !== id)
+      this.filteredUsers = this.userList;
+      this.totalUsers = this.filteredUsers.length;
+    });
   }
 
-  changeItemsPerPage(value: 5 | 10 | 20): void {
-    this.itemsPerPage = value;
+  protected changeItemsPerPage(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+    this.itemsPerPage = +value as 5 | 10 | 20;
     this.currentPage = 1;
   }
 
-  previousPage(): void {
+  protected previousPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
     }
   }
 
-  nextPage(): void {
+  protected nextPage(): void {
     if (this.currentPage < Math.ceil(this.userList.length / this.itemsPerPage)) {
       this.currentPage++;
     }
-  }
-
-  deleteUser(id: string): void {
-    this.profileService.remove(id).subscribe((val) => {
-      this.userList = this.filteredUsers.filter(user => user.id !== id)
-      this.filteredUsers = this.userList;
-      this.totalUsers = this.filteredUsers.length;
-    });
   }
 
 }
